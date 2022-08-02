@@ -11,8 +11,8 @@ router.get('/:ticker/:date/:currency', (req, res) =>{
     var dict = {};
 
     Promise.all([
-    axios.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='+ ticker +'&outputsize=compact&apikey=9XLJ9WHT2OOGDEOC'),
-    axios.get('https://api.polygon.io/v2/aggs/ticker/C:USD'+currency+'/prev?adjusted=true&apiKey=jADjpUmQtZNLwDB6Ts1nbiiHSvqDeLor')
+    axios.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='+ ticker +'&outputsize=compact&apikey=' + process.env.ALPHA_API),
+    axios.get('https://api.polygon.io/v2/aggs/ticker/C:USD'+currency+'/prev?adjusted=true&apiKey=' + process.env.POLYGON_API)
     ])
 
 
@@ -21,7 +21,7 @@ router.get('/:ticker/:date/:currency', (req, res) =>{
         for (const [key, value] of Object.entries(response[0]['data']['Time Series (Daily)'])){
             if(key === date){
                 dict['date'] = key;
-                dict['close'] = parseInt(value['4. close'])
+                dict['close'] = (parseFloat(value['4. close'])).toFixed(2);
                 //res.json({date: key, close: value['4. close']});
             };
         }
@@ -32,15 +32,17 @@ router.get('/:ticker/:date/:currency', (req, res) =>{
         }
            //comment
         if(currency == 'USD' ) {
+            dict['company'] = ticker;
             dict['currency'] = 'USD';
             res.json(dict);
             return;
         }
         else if(response[1]['data']['results'][0]['c']){
 
-            var exchangeRate = parseInt(response[1]['data']['results'][0]['c']);
+            var exchangeRate = parseFloat(response[1]['data']['results'][0]['c']);
 
-            dict['close'] = dict['close']*exchangeRate;
+            dict['company'] = ticker;
+            dict['close'] = (dict['close']*exchangeRate).toFixed(2);
             dict['currency'] = currency;
             res.json(dict);
             return;
