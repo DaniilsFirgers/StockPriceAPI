@@ -22,7 +22,7 @@ router.get('/:ticker/:date/:currency', (req, res) =>{
             if(key === date){
                 dict['date'] = key;
                 dict['close'] = (parseFloat(value['4. close'])).toFixed(2);
-                //res.json({date: key, close: value['4. close']});
+
             };
         }
 
@@ -30,7 +30,7 @@ router.get('/:ticker/:date/:currency', (req, res) =>{
             res.json({message: 'Data for '+ date + ' was not found. Please check data format or try with another date.'});
             return;
         }
-           //comment
+
         if(currency == 'USD' ) {
             dict['company'] = ticker;
             dict['currency'] = 'USD';
