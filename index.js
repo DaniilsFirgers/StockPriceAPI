@@ -2,13 +2,8 @@ require("dotenv").config();
 const express = require('express');
 const app = express();
 
-//Date + ticker
-
+//Base url
 app.use('', require('./routes/api/stocks'));
-
-app.get('/', (res, req) => {
-    res.send('Hello World!');
-});
 
 const PORT = process.env.PORT || 5000;
 
